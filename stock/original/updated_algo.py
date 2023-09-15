@@ -71,6 +71,9 @@ class Stock_Lot_Long(object):
         __str__() : Prints basic information about the stock lot. Eg quantity,date,buy_price
 
     """
+
+    # @BCP - The above documentation states that the tag class attribute is used as a unique identifier.
+    # However, using tag as a class attribute defeats the uniqueness objective - demonstrate via class_attr_example.py
     tag = 1
 
     def __init__(self, stock, buy_price, quantity, date, stop_loss=None, target=None):
@@ -80,16 +83,20 @@ class Stock_Lot_Long(object):
         self.buy_price = float(buy_price)
         Stock_Lot_Long.tag += 1
 
+        # @BCP - should be if stop_loss is None
         if stop_loss == None:
+            # @BCP - magic number
             self.stop_loss = 0.90 * buy_price
         else:
             self.stop_loss = stop_loss
 
+        # @BCP - same issues as above
         if target == None:
             self.target = 1.05 * buy_price
         else:
             self.target = target
 
+    # The get methods (except get_face_value) listed below are repetitive - just call the attribute
     def get_stock_name(self):
         return self.stock
 
@@ -111,6 +118,9 @@ class Stock_Lot_Long(object):
     def set_stock_stop_loss(self, stop_loss):
         self.stop_loss = float(stop_loss)
 
+    # @BCP - In the __init__() method, target can be None; in fact, that is the default value.
+    # However, this method gives a conflicting story, since passing None will raise an Exception when calling float(None)
+    # Why does the target have to be a float?  Why can't it be an integer considering we are talking about prices?
     def set_stock_target(self, target):
         self.target = float(target)
 
@@ -120,13 +130,15 @@ class Stock_Lot_Long(object):
     def get_stock_date(self):
         return self.date
 
+    # @BCP - This should be an f-string
     def __str__(self):
         result = self.get_stock_name() + ":" + " Number of shares:" + str(
             self.get_stock_quantity()) + "  bought at:" + str(self.get_stock_buy_price())
         result += " Buy Date:" + str(self.get_stock_date())
         return result
 
-
+# @BCP - This class is almost a repeat of Stock_Lot_Long.  The only things that are different is the multipliers in the
+# __init__ and the __str__
 class Stock_Lot_Short(object):
     """
     An object of type Stock_Lot_Short used to create stock_lot of the type "SHORT"
@@ -266,12 +278,16 @@ class Stock_Lot_EMA(Stock_Lot_Long):
     """
 
     def __init__(self, stock, buy_price, quantity, date, ema, stop_loss=None, target=None):
+        # @BCP - should be using the super().__init__()
+        # Additionally, the stop_loss and target arguments in the __init__() method will never get passed into the
+        # super().__init__()
         Stock_Lot_Long.__init__(self, stock, buy_price, quantity, date, stop_loss=None, target=None)
         self.ema_shorter, self.ema_longer = ema
 
     def get_stock_ema(self):
         return (self.ema_shorter, self.ema_longer)
 
+# @BCP - The commented out code blocks should be removed - especially in a script that just defines things.
 
 # tsla_long=Stock_Lot_Long("tsla",22,100,"20180101")
 # tsla_short=Stock_Lot_Short("tsla", 22, 100, "20180101")
@@ -280,6 +296,10 @@ class Stock_Lot_EMA(Stock_Lot_Long):
 
 # stocks=["MSFT","IDEA.NS","HDFCBANK.NS"]
 # period="6mo"
+
+# @BCP - Follow PEP8
+# @BCP - For period, there's too much chance for error.  There should be more stringent error checking.
+# What happens if the user accidentally passed in a negative value?
 def Create_Data(stocks, period):
     """
 
@@ -301,6 +321,7 @@ def Create_Data(stocks, period):
         ticker = yf.Ticker(name)
         data = ticker.history(period=period)
         data = data[["Open", 'High', "Close", "Low", "Volume"]]
+        # @BCP - This export does not tell the user the destination directory and will force them to go search for it.
         data.to_excel(name + ".xlsx")
 
 
@@ -330,7 +351,8 @@ def Load_Data(stocks):
 
 
     """
-
+    # @BCP - This code is misleading because you aren't returning back a dataframe; in actuality, the code is
+    # returning back a dict of dataframes.  Avoid Hungarian notation.
     stocks_data_frame = {}
 
     for stock in stocks:
@@ -339,6 +361,9 @@ def Load_Data(stocks):
         #     name=name[0:name.index(".")]
 
         data = pd.read_excel(stock + ".xlsx", index_col=0)
+        # @BCP - Repeated code blocks.
+        # @BCP - Inconsistent code - EMA_MACD has underscore separating EMA.  However, the other ones do not have
+        # underscores - ex. EMA50, EMA100, etc.
         data["EMA50"] = data["Close"].ewm(span=50, adjust=False).mean()
         data["EMA100"] = data["Close"].ewm(span=100, adjust=False).mean()
         data['EMA9'] = data["Close"].ewm(span=9, adjust=False).mean()
@@ -361,6 +386,7 @@ def Load_Data(stocks):
     return stocks_data_frame
 
 
+# @BCP - This is a bad function name - it's too vague.
 def Slice_Dataframe(dataframe, date):
     """
 
@@ -377,7 +403,8 @@ def Slice_Dataframe(dataframe, date):
     A sliced DataFrame object with 15 days previous data from date. (Date also included in data)
 
     """
-
+    # @BCP - the 15 days should not be hardcoded in.  It should be an argument passed into the function with a default
+    # of 15 days.
     slice_data = dataframe.iloc[date - 15:date + 1, :]
 
     return slice_data
@@ -466,16 +493,6 @@ class Portfolio(object):
                                                 and then calculates total worth.
 
         print_portfolio(): prints all the stock_lot objects in self.stock_lot_dict, self.long_cash and self.short_cash
-
-
-
-
-
-
-
-
-
-
     '''
     def __init__(self, long_cash, short_cash, stock_lot_dict):
         self.long_cash = float(long_cash)
@@ -492,6 +509,7 @@ class Portfolio(object):
 
         return self.stock_lot_dict
 
+    # @BCP - This should have the EXACT same name as a class.
     def add_stock_lot_long(self, Stock_Lot_Long):
         self.stock_lot_dict["Long"].append(Stock_Lot_Long)
 
@@ -574,7 +592,8 @@ class Portfolio(object):
 
         print("---------------------------------")
 
-
+# @BCP - This should never have been a class.  There's too many attributes and methods attached to it.
+# This should be broken out into individual classes.
 class Technical_analysis(object):
     '''
     An object of type Technical_analysis used to conduct technical analysis on stock_data_frame
@@ -684,10 +703,15 @@ class Technical_analysis(object):
         self.bol_upindex = self.columns.index("BOL_UP")
         self.bol_lowindex = self.columns.index("BOL_LOW")
 
+    # @BCP - Notice the trend that all the bullish functions have repeated code setting the
+    # buy_price, stop_loss, and pattern.  The same goes for the bear functions have repeated code setting the default
+    # values for sell_price, stop_loss, pattern
     def bullish_marubozu(self):
         buy_price = None
         stop_loss = None
         pattern = False
+        # @BCP - This pattern gets used quite a bit - it would probably be better to put it in a function and make it
+        # more readable.
         high = self.data.iat[-1, self.highindex]
         open = self.data.iat[-1, self.openindex]
         close = self.data.iat[-1, self.closeindex]
@@ -758,6 +782,8 @@ class Technical_analysis(object):
 
         return (pattern, buy_price, stop_loss)
 
+    # @BCP - this is a bad method name because it's a noun and would make the user think this is an attribute and
+    # not a method.  The same goes for uptrend and volume method names.
     def downtrend(self):
         pattern = False
         prev_day_close = self.data.iat[-2, self.closeindex]
@@ -1143,6 +1169,7 @@ class Technical_analysis(object):
 
         return False
 
+    # @BCP - These bullish EMA codes are all doing the same thing.  They should be modified to
     def bullish_ema_50_100(self):
         ema50 = self.data.iat[-1, self.ema50index]
         ema100 = self.data.iat[-1, self.ema100index]
@@ -1249,7 +1276,8 @@ class Technical_analysis(object):
 
         return (pattern, sell_price, stop_loss)
 
-
+# @BCP - the long_call and short_call methods are too long.  What happens if the user wants to add other types of
+# analysis?  The user doesn't have the flexibility to do the analysis they want.
 class Logic(object):
     def __init__(self, Technical_analysis, weights):
         self.tech_analysis = Technical_analysis
@@ -1366,6 +1394,7 @@ class Logic(object):
         if volume == True:
             self.short += self.weights["volume"]
 
+    # @BCP - This block of code is too repetitive.
         if 0 < self.short <= 0.20:
             self.short_cash = 0.05
 
