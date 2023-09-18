@@ -689,8 +689,11 @@ class Technical_analysis(object):
         self.lowindex = self.columns.index("Low")
         self.openindex = self.columns.index("Open")
         self.closeindex = self.columns.index("Close")
+
+        # @BCP This is inconsistent case
         self.volumeindex = self.columns.index("Volume")
         self.avg_volumeindex = self.columns.index("AVG_VOLUME")
+
         self.ema50index = self.columns.index("EMA50")
         self.ema100index = self.columns.index("EMA100")
         self.ema200index = self.columns.index("EMA200")
@@ -784,6 +787,8 @@ class Technical_analysis(object):
 
     # @BCP - this is a bad method name because it's a noun and would make the user think this is an attribute and
     # not a method.  The same goes for uptrend and volume method names.
+
+    # @BCP - just return the logic results
     def downtrend(self):
         pattern = False
         prev_day_close = self.data.iat[-2, self.closeindex]
@@ -1395,6 +1400,8 @@ class Logic(object):
             self.short += self.weights["volume"]
 
     # @BCP - This block of code is too repetitive.
+    # Notice that this is in order - use bisect
+    # No Else condition
         if 0 < self.short <= 0.20:
             self.short_cash = 0.05
 
