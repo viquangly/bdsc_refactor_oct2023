@@ -1,5 +1,5 @@
 
-import strategy as st
+import stock.refactor.strategy as st
 
 
 class Marubozu(st.Strategy):

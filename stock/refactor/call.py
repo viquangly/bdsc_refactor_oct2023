@@ -3,9 +3,9 @@ from abc import ABC, abstractmethod
 import bisect
 from typing import Sequence
 
-import strategy as st
-import bull
-import bear
+import stock.refactor.strategy as st
+import stock.refactor.bull as bull
+import stock.refactor.bear as bear
 
 
 def calculate_cash(
@@ -15,7 +15,7 @@ def calculate_cash(
 ) -> st.Numeric:
     if x > long_shorts[-1]:
         return max_cash
-    index = bisect.bisect_left(x)
+    index = bisect.bisect_left(long_shorts, x)
     return cash[index]
 
 
