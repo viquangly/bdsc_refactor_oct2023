@@ -21,6 +21,8 @@ import matplotlib.pyplot as plt
 import math
 
 
+# @BCP - Follow PEP8 for class naming convention
+# Doc string should be split up to individual methods
 class Stock_Lot_Long(object):
     """
     An object of type Stock_Lot_Long used to create stock_lot of the type "LONG"
@@ -76,6 +78,7 @@ class Stock_Lot_Long(object):
     # However, using tag as a class attribute defeats the uniqueness objective - demonstrate via class_attr_example.py
     tag = 1
 
+    # @BCP - Don't convert argument underneath the hood.  Force the user to do it beforehand.
     def __init__(self, stock, buy_price, quantity, date, stop_loss=None, target=None):
         self.stock = str(stock)
         self.date = date
@@ -115,12 +118,15 @@ class Stock_Lot_Long(object):
     def get_face_value(self):
         return self.buy_price * self.quantity
 
+    # @BCP - In the __init__() method, stop_loss can be None; in fact, that is the default value.
+    # However, this method gives a conflicting story, since passing None will raise an Exception when calling float(None)
+    # Why does the stop_loss have to be a float?  Why can't it also be an integer considering we are talking about prices?
     def set_stock_stop_loss(self, stop_loss):
         self.stop_loss = float(stop_loss)
 
     # @BCP - In the __init__() method, target can be None; in fact, that is the default value.
     # However, this method gives a conflicting story, since passing None will raise an Exception when calling float(None)
-    # Why does the target have to be a float?  Why can't it be an integer considering we are talking about prices?
+    # Why does the target have to be a float?  Why can't it also be an integer considering we are talking about prices?
     def set_stock_target(self, target):
         self.target = float(target)
 
@@ -136,6 +142,7 @@ class Stock_Lot_Long(object):
             self.get_stock_quantity()) + "  bought at:" + str(self.get_stock_buy_price())
         result += " Buy Date:" + str(self.get_stock_date())
         return result
+
 
 # @BCP - This class is almost a repeat of Stock_Lot_Long.  The only things that are different is the multipliers in the
 # __init__ and the __str__
@@ -248,6 +255,8 @@ class Stock_Lot_Short(object):
         return result
 
 
+# @BCP - not sure if this is a good case to use inheritance.  There is only one extra argument (ema) and the
+# get_stock_ema() method just retrieves the ema attribute.
 class Stock_Lot_EMA(Stock_Lot_Long):
     """
 
@@ -300,6 +309,10 @@ class Stock_Lot_EMA(Stock_Lot_Long):
 # @BCP - Follow PEP8
 # @BCP - For period, there's too much chance for error.  There should be more stringent error checking.
 # What happens if the user accidentally passed in a negative value?
+
+# @BCP - Consideration - would you ever want the capability to pass in different periods for different stocks?
+
+# @BCP - this should return an output and not export it directly.
 def Create_Data(stocks, period):
     """
 
@@ -377,8 +390,11 @@ def Load_Data(stocks):
         data["STD20"] = data["Close"].rolling(window=20).std()
         data["BOL_UP"] = data["SMA20"] + (2 * data["STD20"])
         data["BOL_LOW"] = data["SMA20"] - (2 * data["STD20"])
+        # @BCP - Inconsistent code "Volume" vs "VOLUME"
         data["AVG_VOLUME"] = data["Volume"].rolling(window=10).mean()
 
+        # @BCP - Inconsistent code.  The dataset should have the same column name with the stock.  This seems to be
+        # duplicated since there is a key in the stocks_data_frame.
         data[str(stock)] = stock
 
         stocks_data_frame[str(stock)] = data
@@ -509,7 +525,7 @@ class Portfolio(object):
 
         return self.stock_lot_dict
 
-    # @BCP - This should have the EXACT same name as a class.
+    # @BCP - This should not have the EXACT same name as a class.
     def add_stock_lot_long(self, Stock_Lot_Long):
         self.stock_lot_dict["Long"].append(Stock_Lot_Long)
 
@@ -879,6 +895,8 @@ class Technical_analysis(object):
 
         return (pattern, sell_price, stop_loss)
 
+    # @BCP - This is a good example of cons of repeating code.  Notice the inconsistency.  In other bearish methods,
+    # it starts off with sell_price, stop_loss, pattern
     def bearish_shooting_star(self):
         pattern = False
         sell_price = None
@@ -911,6 +929,8 @@ class Technical_analysis(object):
 
         return (pattern, sell_price, stop_loss)
 
+    # @BCP - same as the comment above.  Code inconsistency - in other bullish methods, it starts with
+    #  buy_price, stop_loss, pattern
     def bullish_inverted_hammer(self):
         pattern = False
         buy_price = None
@@ -1174,7 +1194,7 @@ class Technical_analysis(object):
 
         return False
 
-    # @BCP - These bullish EMA codes are all doing the same thing.  They should be modified to
+    # @BCP - These bullish EMA codes are all doing the same thing.
     def bullish_ema_50_100(self):
         ema50 = self.data.iat[-1, self.ema50index]
         ema100 = self.data.iat[-1, self.ema100index]
