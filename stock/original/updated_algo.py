@@ -1315,6 +1315,8 @@ class Logic(object):
     def long_call(self):
 
         bullish_marubozu = self.tech_analysis.bullish_marubozu()
+
+        # @BCP - Should be if bullish_marubozu[0]
         if bullish_marubozu[0] == True:
             self.long += self.weights["bullish_marubozu"]
             # print("bullish marubozu")
