@@ -25,14 +25,14 @@ class Call(ABC):
     def __init__(self, strategies: Sequence[st.Strategy]):
         self.strategies = strategies
 
-    def calculate_cash(self, price_indexer: st.PriceIndexer) -> st.Numeric:
+    def calculate_cash(self, price_indexer: st.PriceIndexer, **kwargs) -> st.Numeric:
         lookup_value = 0
         for strategy in self.strategies:
             result = strategy.execute(price_indexer)
             if result.pattern:
                 lookup_value += strategy.weight
 
-        return calculate_cash(lookup_value)
+        return calculate_cash(lookup_value, **kwargs)
 
 
 class LongCall(Call):
