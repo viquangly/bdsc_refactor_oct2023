@@ -1450,6 +1450,7 @@ class Logic(object):
 
         return self.short_cash
 
+    # @BCP - inconsistent code - should return cash just like long_call, short_call.
     def ema_50_100(self):
 
         ema = self.tech_analysis.bullish_ema_50_100()
@@ -1485,6 +1486,7 @@ class Logic(object):
         return (long_macd, cash)
 
 
+# @BCP - this class is too bloated - too many methods.
 class Backtest(object):
     def __init__(self, Portfolio, stocks_data_frame, weights, start_date, end_date):
         self.stocks_data_frame = stocks_data_frame
@@ -1586,6 +1588,9 @@ class Backtest(object):
         price_dict={}
 
         for stock in self.stocks_data_frame:
+
+            # @BCP - just dict.fromkeys
+            # stock_dict = dict.fromkeys(['long_call', 'short_call', 'ema_50_100'], 0)
             stock_dict={}
             stock_dict["long_call"]=0
             stock_dict["short_call"]=0
@@ -1595,6 +1600,7 @@ class Backtest(object):
             stock_dict["ema_9_21"]=0
             stock_dict["long_bollinger"]=0
             stock_dict["long_macd"]=0
+
             stock_data = self.stocks_data_frame[stock]
             stock_slice_data = Slice_Dataframe(stock_data, date)
             price = stock_data.iat[date, self.columnsindex["Close"]]
@@ -1612,6 +1618,10 @@ class Backtest(object):
             long_macd = logic.bullish_macd()
             long_bollinger = logic.bullish_bollinger()
 
+            # @BCP - Remove commented out code
+
+            # @BCP - Notice how the first 2 conditions are different?  This is a result of
+            # having inconsistent returns in Logic class.
             if long_call != None:
                 stock_dict["long_call"]=long_call
                 # long_cash = self.portfolio.get_long_cash() * long_call
