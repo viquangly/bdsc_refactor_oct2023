@@ -1,7 +1,7 @@
 from __future__ import annotations
 from abc import ABC, abstractmethod
 from collections import namedtuple
-from typing import Union
+from typing import Union, Optional
 
 import pandas as pd
 
@@ -13,7 +13,7 @@ DEFAULT_STRATEGY_RESULT = StrategyResult(False, None, None)
 
 
 def has_downtrend(price_indexer: PriceIndexer) -> bool:
-    prev_day_close = price_indexer.get_previous_price('Close')
+    prev_day_close = price_indexer.get_price('Close', -2)
     ten_day_close = price_indexer.get_price('Close', -10)
     return (
         (ten_day_close > prev_day_close)
@@ -22,7 +22,7 @@ def has_downtrend(price_indexer: PriceIndexer) -> bool:
 
 
 def has_uptrend(price_indexer: PriceIndexer) -> bool:
-    prev_day_close = price_indexer.get_previous_price('Close')
+    prev_day_close = price_indexer.get_price('Close', -2)
     ten_day_close = price_indexer.get_price('Close', -10)
     return (
         (prev_day_close > ten_day_close)
@@ -35,26 +35,25 @@ class PriceIndexer:
     def __init__(self, data: pd.DataFrame):
         self.data = data
 
-    def __getitem__(self, index: int):
+    def __getitem__(self, index: Union[int, slice]) -> PriceIndexer:
+        if isinstance(index, int):
+            index = [index]
+        return PriceIndexer(self.data.iloc[index])
+
+    def get_row(self, index: int = -1):
         return self.data.iloc[index]
 
     def get_price(self, price: str, index: int = -1) -> Numeric:
-        return self[index][price]
-
-    def get_previous_price(self, price: str) -> Numeric:
-        return self.get_price(price, -2)
+        return self.data.get_row(index)[price]
 
     def get_standard_prices(self, index: int = -1) -> StandardPrices:
-        out = self[index]
+        out = self.get_row(index)
         return StandardPrices(out[price] for price in ('Open', 'Close', 'High', 'Low'))
-
-    def get_previous_standard_prices(self) -> StandardPrices:
-        return self.get_standard_prices(-2)
 
 
 class Strategy(ABC):
 
-    def __init__(self, weight: Numeric):
+    def __init__(self, weight: Optional[Numeric] = None):
         self.weight = weight
 
     @abstractmethod

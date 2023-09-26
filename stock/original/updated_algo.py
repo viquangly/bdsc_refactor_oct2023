@@ -1158,6 +1158,9 @@ class Technical_analysis(object):
         pattern = False
         sell_price = None
         stop_loss = None
+
+        # @BCP - bad naming convention - this is cognitive overload to others because the variables
+        # are not descriptive
         day1_close = self.data.iat[-3, self.closeindex]
         day1_open = self.data.iat[-3, self.openindex]
         day2_open = self.data.iat[-2, self.openindex]
@@ -1167,6 +1170,8 @@ class Technical_analysis(object):
         day3_high = self.data.iat[-1, self.highindex]
         low = min(day1_high, day2_high, day3_high)
         check_uptrend = self.uptrend()
+
+        # @BCP - There are 4 nested if-statements - this is a code smell and should be refactored.
         if check_uptrend:
 
             if day1_close > day1_open:
