@@ -1,5 +1,5 @@
 
-from typing import Dict, Optional
+from typing import Dict, Sequence
 
 import pandas as pd
 import yfinance as yf
@@ -20,17 +20,16 @@ def assert_stocks(stocks: Dict[str, Period]) -> None:
         raise TypeError('values in stocks must be of type Period')
 
 
-def _create_ema_feature(data: pd.DataFrame, span: int) -> None:
-    data[f'EMA_{span}'] = data["Close"].ewm(span=span, adjust=False).mean()
+def _create_ema_feature(data: pd.DataFrame, spans: Sequence[int]) -> None:
+    for span in spans:
+        data[f'EMA_{span}'] = data["Close"].ewm(span=span, adjust=False).mean()
 
 
 def _transform_data(data: pd.DataFrame) -> None:
     cols_to_keep = ['Open', 'High', 'Close', 'Low', 'Volume']
     data = data[cols_to_keep]
 
-    spans = (50, 100, 9, 21, 200, 25)
-    for span in spans:
-        _create_ema_feature(data, span)
+    _create_ema_feature(data, (50, 100, 9, 21, 200, 25))
 
     data["MACD"] = (
         data["Close"].ewm(span=12, adjust=False).mean()
