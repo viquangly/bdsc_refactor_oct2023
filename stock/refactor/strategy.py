@@ -40,7 +40,7 @@ class PriceIndexer:
             index = [index]
         return PriceIndexer(self.data.iloc[index])
 
-    def get_row(self, index: int = -1):
+    def get_row(self, index: int = -1) -> pd.Series:
         return self.data.iloc[index]
 
     def get_price(self, price: str, index: int = -1) -> Numeric:
