@@ -1319,6 +1319,7 @@ class Technical_analysis(object):
 
         return (pattern, sell_price, stop_loss)
 
+
 # @BCP - the long_call and short_call methods are too long.  What happens if the user wants to add other types of
 # analysis?  The user doesn't have the flexibility to do the analysis they want.
 class Logic(object):
@@ -1371,8 +1372,10 @@ class Logic(object):
 
         volume = self.tech_analysis.volume()
         if volume == True:
+            # @BCP - inconsistent code; there are now 3 variations of volume: 'Volume', 'volume' and 'AVG_VOLUME'
             self.long += self.weights["volume"]
 
+        # @BCP - There could be a potential for None return because there is no else condition.
         if 0.10 < self.long <= 0.20:
             self.long_cash = 0.05
 

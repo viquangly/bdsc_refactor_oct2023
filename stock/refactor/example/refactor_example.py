@@ -20,7 +20,6 @@ stock_index[0].data
 
 stock_index[-2:].data
 
-
 maru = bull.Marubozu()
 maru.execute(stock_index)
 
