@@ -1615,6 +1615,7 @@ class Backtest(object):
             stock_dict={}
             stock_dict["long_call"]=0
             stock_dict["short_call"]=0
+            # @BCP - Inconsistent code.  In other areas of the code, EMA, MACD are uppercse.
             stock_dict["ema_50_100"]=0
             stock_dict["ema_100_200"]=0
             stock_dict["ema_25_50"]=0
@@ -1867,7 +1868,7 @@ class Backtest(object):
 
 
 
-
+# @BCP - This is an example of commented code and its effects.  period is no longer needed in the arguments.
 def intialize_variables(stocks,period,long_cash,short_cash):
 
     # Create_Data(stocks, period)
