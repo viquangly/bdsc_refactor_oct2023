@@ -35,18 +35,29 @@ class PriceIndexer:
     def __init__(self, data: pd.DataFrame):
         self.data = data
 
+    @staticmethod
+    def _shift_index(index: int) -> int:
+        if index > 0:
+            raise ValueError('index must be <= 0 when given an int')
+        shift = 1
+        return index - shift
+
     def __getitem__(self, index: Union[int, slice]) -> PriceIndexer:
         if isinstance(index, int):
-            index = [index]
-        return PriceIndexer(self.data.iloc[index])
+            return PriceIndexer(self.get_row(index, as_dataframe=True))
 
-    def get_row(self, index: int = -1) -> pd.Series:
-        return self.data.iloc[index]
+        new_slice_args = [None if x is None else self._shift_index(x) for x in (index.start, index.stop, index.step)]
+        new_slice = slice(*new_slice_args)
+        return PriceIndexer(self.data.iloc[new_slice])
 
-    def get_price(self, price: str, index: int = -1) -> Numeric:
-        return self.data.get_row(index)[price]
+    def get_row(self, index: int = 0, as_dataframe: bool = False) -> Union[pd.Series, pd.DataFrame]:
+        index = self._shift_index(index)
+        return self.data.iloc[[index]] if as_dataframe else self.data.iloc[index]
 
-    def get_standard_prices(self, index: int = -1) -> StandardPrices:
+    def get_price(self, price: str, index: int = 0) -> Numeric:
+        return self.get_row(index)[price]
+
+    def get_standard_prices(self, index: int = 0) -> StandardPrices:
         out = self.get_row(index)
         return StandardPrices(out[price] for price in ('Open', 'Close', 'High', 'Low'))
 

@@ -699,6 +699,8 @@ class Technical_analysis(object):
     '''
     def __init__(self, sliced_data):
         self.data = copy.deepcopy(sliced_data)
+
+        # @BCP - This is unnecessary and brings additional cognitive load
         self.index = self.data.index
         self.columns = list(self.data.columns)
         self.highindex = self.columns.index("High")
@@ -725,6 +727,8 @@ class Technical_analysis(object):
     # @BCP - Notice the trend that all the bullish functions have repeated code setting the
     # buy_price, stop_loss, and pattern.  The same goes for the bear functions have repeated code setting the default
     # values for sell_price, stop_loss, pattern
+
+    # @BCP - This is a bad method name - methods / functions should be verbs and not nouns
     def bullish_marubozu(self):
         buy_price = None
         stop_loss = None
@@ -1127,6 +1131,7 @@ class Technical_analysis(object):
         buy_price = None
         stop_loss = None
 
+        # @BCP - too much cognitive load on the dates
         day1_close = self.data.iat[-3, self.closeindex]
         day1_open = self.data.iat[-3, self.openindex]
         day2_open = self.data.iat[-2, self.openindex]
@@ -1140,6 +1145,9 @@ class Technical_analysis(object):
 
             if day1_close < day1_open:
                 if day2_open < day1_close:
+
+                    # @BCP - this is using extra rows of data - it grabs everything except the current day's pricing.
+                    # However, doji and spinning top only need 1 day's worth of pricing
                     day2_data_slice = self.data.iloc[:-1, :]
                     day2_technical_analysis = Technical_analysis(day2_data_slice)
                     check_doji, _, _ = day2_technical_analysis.doji()

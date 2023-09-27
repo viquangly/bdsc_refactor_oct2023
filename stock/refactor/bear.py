@@ -6,8 +6,8 @@ class EveningStar(st.Strategy):
 
     def execute(self, price_indexer: st.PriceIndexer) -> st.StrategyResult:
         current_day_prices = price_indexer.get_standard_prices()
-        prior_day_prices = price_indexer.get_standard_prices(-2)
-        _2day_prices = price_indexer.get_standard_prices(-3)
+        prior_day_prices = price_indexer.get_standard_prices(-1)
+        _2day_prices = price_indexer.get_standard_prices(-2)
         low = min(current_day_prices.low, prior_day_prices.low, _2day_prices.low)
 
         if not all([
@@ -18,7 +18,7 @@ class EveningStar(st.Strategy):
         ]):
             return st.DEFAULT_STRATEGY_RESULT
 
-        prior_day = price_indexer[-2]
+        prior_day = price_indexer[-1]
         has_doji = bull.Doji().execute(prior_day).pattern
         has_spinning_top = bull.SpinningTop().execute(prior_day).pattern
 
