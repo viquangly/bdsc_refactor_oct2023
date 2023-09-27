@@ -59,7 +59,7 @@ class PriceIndexer:
 
     def get_standard_prices(self, index: int = 0) -> StandardPrices:
         out = self.get_row(index)
-        return StandardPrices(out[price] for price in ('Open', 'Close', 'High', 'Low'))
+        return StandardPrices(*[out[price] for price in ('Open', 'Close', 'High', 'Low')])
 
 
 class Strategy(ABC):
@@ -76,5 +76,5 @@ class Volume(Strategy):
 
     def execute(self, price_indexer: PriceIndexer) -> StrategyResult:
         current_day_volume = price_indexer.get_price('Volume')
-        current_day_avg_volume = price_indexer.get_price('Avg_Volume')
+        current_day_avg_volume = price_indexer.get_price('AVG_VOLUME')
         return StrategyResult(current_day_volume > current_day_avg_volume, None, None)

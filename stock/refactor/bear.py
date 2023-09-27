@@ -1,4 +1,4 @@
-import bull
+import stock.refactor.bull as bull
 import stock.refactor.strategy as st
 
 
