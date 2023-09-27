@@ -812,6 +812,9 @@ class Technical_analysis(object):
     def downtrend(self):
         pattern = False
         prev_day_close = self.data.iat[-2, self.closeindex]
+
+        # @BCP - is this ten_day_close or nine_day_close?
+        # The -10 should shift you to day 9.
         ten_day_close = self.data.iat[-10, self.closeindex]
         if ten_day_close > prev_day_close:
 
@@ -823,6 +826,8 @@ class Technical_analysis(object):
     def uptrend(self):
         pattern = False
         prev_day_close = self.data.iat[-2, self.closeindex]
+
+        # @BCP - same comment as downtrend.
         ten_day_close = self.data.iat[-10, self.closeindex]
 
         if prev_day_close > ten_day_close:

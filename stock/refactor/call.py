@@ -9,7 +9,7 @@ import stock.refactor.bear as bear
 
 
 def calculate_cash(
-        x, max_cash: st.Numeric = .15,
+        x: st.Numeric, max_cash: st.Numeric = .15,
         long_shorts: Sequence[st.Numeric] = (.2, .3, .4, .5, .6, .7, .8),
         cash: Sequence[st.Numeric] = (.05, .06, .07, .08, .09, .1, .11)
 ) -> st.Numeric:
@@ -29,7 +29,7 @@ class Call(ABC):
         lookup_value = 0
         for strategy in self.strategies:
             result = strategy.execute(price_indexer)
-            if result.pattern and (strategy.weight is not None):
+            if result.pattern:
                 lookup_value += strategy.weight
 
         return calculate_cash(lookup_value, **kwargs)
