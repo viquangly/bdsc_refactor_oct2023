@@ -376,7 +376,8 @@ def Load_Data(stocks):
         data = pd.read_excel(stock + ".xlsx", index_col=0)
         # @BCP - Repeated code blocks.
         # @BCP - Inconsistent code - EMA_MACD has underscore separating EMA.  However, the other ones do not have
-        # underscores - ex. EMA50, EMA100, etc.
+        # underscores - ex. EMA50, EMA100, etc.  Additionally, there are methods later on that are named like:
+        # bullish_ema_50_100
         data["EMA50"] = data["Close"].ewm(span=50, adjust=False).mean()
         data["EMA100"] = data["Close"].ewm(span=100, adjust=False).mean()
         data['EMA9'] = data["Close"].ewm(span=9, adjust=False).mean()
@@ -449,13 +450,13 @@ class Portfolio(object):
     Input parameters:
         long_cash= The amount of cash to be invested in long trades (Float)
         short_cash= The amount of cash kept as reserve against the short trades(Float)
-        stock_lot_dict= Dict with keys "Long","Short","EMA" to store objects "Stock_Lot_Long","Stock_Lot_Short","Stock_Lot_EMA" trades in the appropiate key value (Dictionary)
+        stock_lots= Dict with keys "Long","Short","EMA" to store objects "Stock_Lot_Long","Stock_Lot_Short","Stock_Lot_EMA" trades in the appropiate key value (Dictionary)
 
     Functions:
         __init__(): Intialises all the neccessary variables for object "Portfolio":
             self.long_cash= Used to store long_cash(Float)
             self.short_cash=Used to store short_cash(Float)
-            self.stock_lot_dict=Used to store stock_lot_dict(Dictionary)
+            self.stock_lots=Used to store stock_lots(Dictionary)
 
         get_long_cash(): Returns self.long_cash
 
@@ -463,28 +464,28 @@ class Portfolio(object):
         get_short_cash(): Returns self.short_cash
 
 
-        get_stock_lot_dict(): Returns self.stock_lot_dict
+        get_stock_lot_dict(): Returns self.stock_lots
 
 
-        add_stock_lot_long(Stock_Lot_Long): Adds new Object "Stock_Lot_Long" to "Long" key of self.stock_lot_dict
+        add_stock_lot_long(Stock_Lot_Long): Adds new Object "Stock_Lot_Long" to "Long" key of self.stock_lots
 
 
-        remove_stock_lot_long(Stock_Lot_Long): Removes existing Object "Stock_Lot_Long" from "Long" key of self.stock_lot_dict
-
-
-
-        add_stock_lot_short(Stock_Lot_Short): Adds new Object "Stock_Lot_Short" to "Short" key of self.stock_lot_dict
+        remove_stock_lot_long(Stock_Lot_Long): Removes existing Object "Stock_Lot_Long" from "Long" key of self.stock_lots
 
 
 
-        remove_stock_lot_short(Stock_Lot_Short): Removes existing Object "Stock_Lot_Short" from "Short" key of self.stock_lot_dict
+        add_stock_lot_short(Stock_Lot_Short): Adds new Object "Stock_Lot_Short" to "Short" key of self.stock_lots
 
 
 
-        add_stock_lot_short(Stock_Lot_EMA): Adds new Object "Stock_Lot_EMA" to "EMA" key of self.stock_lot_dict
+        remove_stock_lot_short(Stock_Lot_Short): Removes existing Object "Stock_Lot_Short" from "Short" key of self.stock_lots
 
 
-        remove_stock_lot_short(Stock_Lot_EMA): Removes existing Object "Stock_Lot_EMA" from "EMA" key of self.stock_lot_dict
+
+        add_stock_lot_short(Stock_Lot_EMA): Adds new Object "Stock_Lot_EMA" to "EMA" key of self.stock_lots
+
+
+        remove_stock_lot_short(Stock_Lot_EMA): Removes existing Object "Stock_Lot_EMA" from "EMA" key of self.stock_lots
 
 
         add_long_cash(cash): Adds cash(Float) to self.long_cash
@@ -499,22 +500,27 @@ class Portfolio(object):
         remove_short_cash(cash): Removes cash(Float) from self.short_cash
 
 
-        get_long_worth(stocks_data_frame,date): Gets worth of stock_lot from "Long" and "EMA" key of self.stock_lot_dict
+        get_long_worth(stocks_data_frame,date): Gets worth of stock_lot from "Long" and "EMA" key of self.stock_lots
                                                 Gets prices of current stock from stocks_data_frame on a particular date
                                                 and then calculates total worth
 
 
-        get_short_worth(stocks_data_frame,date): Gets worth of stock_lot from "Short" key of self.stock_lot_dict
+        get_short_worth(stocks_data_frame,date): Gets worth of stock_lot from "Short" key of self.stock_lots
                                                 Gets prices of current stock from stocks_data_frame on a particular date
                                                 and then calculates total worth.
 
-        print_portfolio(): prints all the stock_lot objects in self.stock_lot_dict, self.long_cash and self.short_cash
+        print_portfolio(): prints all the stock_lot objects in self.stock_lots, self.long_cash and self.short_cash
     '''
+    # @BCP - stock_lots - Avoid Hungarian Notation.  stock_lots should be a list instead of a dict
+
+    # @BCP - Why does cash have to be a float?
+    # If cash does have to be a float - there should be a comment explaining why
     def __init__(self, long_cash, short_cash, stock_lot_dict):
         self.long_cash = float(long_cash)
         self.short_cash = float(short_cash)
         self.stock_lot_dict = stock_lot_dict
 
+    # @BCP - The following 3 methods are unnecessary - just call the attributes
     def get_long_cash(self):
         return self.long_cash
 
@@ -526,6 +532,9 @@ class Portfolio(object):
         return self.stock_lot_dict
 
     # @BCP - This should not have the EXACT same name as a class.
+    # @BCP - All these methods are unnecessary and can be condensed to 2 methods
+    # @BCP - There should be a safeguard to prevent the user from accidentally appending a Stock_Lot_Short object
+    # into the stock_lots['Long']
     def add_stock_lot_long(self, Stock_Lot_Long):
         self.stock_lot_dict["Long"].append(Stock_Lot_Long)
 
@@ -556,6 +565,13 @@ class Portfolio(object):
     def remove_short_cash(self, cash):
         self.short_cash -= cash
 
+    # @BCP - Repeated code - get_long_worth and get_short_worth are essentially the same logic
+
+    # @BCP - Inconsistent code - they are performing the same operation but coded slightly different - higher
+    # cognitive load on others to decipher
+
+    # @BCP - Once again, stocks_data_frame is a bad variable name; in fact, it deceives the user into thinking the
+    # argument should be a dataframe when it should be a dict.  There should definitely be a type check enforced.
     def get_long_worth(self, stocks_data_frame, date):
         """
 
@@ -599,6 +615,10 @@ class Portfolio(object):
         return worth
 
     def print_portfolio(self):
+
+        # BCP - there is a bug in your code.
+        # stock_lots has the keys 'Long', 'Short', 'EMA'
+        # you will print out each letter of the keys in this code.
         print("---------------------------------")
         for stock_lot in self.stock_lot_dict:
             for lot in stock_lot:
@@ -976,6 +996,9 @@ class Technical_analysis(object):
         pattern = False
         buy_price = None
         stop_loss = None
+
+        # @BCP - Inconsistent code.  The variable names current_day and prev_day prefixes are used here.  However,
+        # in bullish_morning_star and bearish_evening_star methods, the prefixes day1, day2, day3 are used.
         prev_day_open = self.data.iat[-2, self.openindex]
         prev_day_close = self.data.iat[-2, self.closeindex]
         prev_day_low = self.data.iat[-2, self.lowindex]
@@ -1173,7 +1196,9 @@ class Technical_analysis(object):
         stop_loss = None
 
         # @BCP - bad naming convention - this is cognitive overload to others because the variables
-        # are not descriptive
+        # are not descriptive.
+
+        # @BCP - this has the opposite convention as uptrend / downtrend functions.
         day1_close = self.data.iat[-3, self.closeindex]
         day1_open = self.data.iat[-3, self.openindex]
         day2_open = self.data.iat[-2, self.openindex]
@@ -1322,6 +1347,8 @@ class Technical_analysis(object):
 
 # @BCP - the long_call and short_call methods are too long.  What happens if the user wants to add other types of
 # analysis?  The user doesn't have the flexibility to do the analysis they want.
+
+# @BCP - Technical_analysis mirrors the class name
 class Logic(object):
     def __init__(self, Technical_analysis, weights):
         self.tech_analysis = Technical_analysis
@@ -1336,6 +1363,11 @@ class Logic(object):
         bullish_marubozu = self.tech_analysis.bullish_marubozu()
 
         # @BCP - Should be if bullish_marubozu[0]
+
+        # @BCP - DRY Violation - look at how many times 'bullish_marubozu' is in the code.  It's in the method name,
+        # variable name, and as a key in the weights dict.
+
+        # @BCP - if you called long_call multiple times, the self.long retains the value from the previous calls
         if bullish_marubozu[0] == True:
             self.long += self.weights["bullish_marubozu"]
             # print("bullish marubozu")
@@ -1373,9 +1405,14 @@ class Logic(object):
         volume = self.tech_analysis.volume()
         if volume == True:
             # @BCP - inconsistent code; there are now 3 variations of volume: 'Volume', 'volume' and 'AVG_VOLUME'
+            # Additionally, look at how the if condition is volume == True and not volume[0] == True like the previous
+            # if statements.
             self.long += self.weights["volume"]
 
         # @BCP - There could be a potential for None return because there is no else condition.
+        # Furthermore, there could be an incorrect bug where it returns self.long_cash from a previous call.
+
+        # @BCP - DRY violation the end threshold is repeated as the starting threshold in the following elif.
         if 0.10 < self.long <= 0.20:
             self.long_cash = 0.05
 
@@ -1547,6 +1584,7 @@ class Backtest(object):
 
         stock_lot_dict = self.portfolio.get_stock_lot_dict()
 
+        # @BCP - this is repeated code in the if / elif blocks.
         for stock_lot in stock_lot_dict:
             if stock_lot == "Long":
                 long_lot = stock_lot_dict["Long"]
