@@ -41,6 +41,5 @@ class Portfolio:
         for lot in self.stock_lots:
             print(lot)
 
-        print("Cash: " + str(self.long_cash))
-
+        print(f"Cash: ${self.long_cash:,.2f}")
         print("---------------------------------")

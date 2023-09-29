@@ -624,6 +624,8 @@ class Portfolio(object):
             for lot in stock_lot:
                 print(lot)
 
+        # @BCP - you may want to format the cash as it is displayed
+        # (i.e. comma separators for thousands and only keep 2 decimals)
         print("Cash: " + str(self.get_long_cash()))
 
         print("---------------------------------")
