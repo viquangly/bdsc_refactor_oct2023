@@ -25,7 +25,7 @@ class Call(ABC):
     def __init__(self, strategies: Sequence[st.Strategy]):
         self.strategies = strategies
 
-    def calculate_cash(self, price_indexer: st.PriceIndexer, **kwargs) -> st.Numeric:
+    def calculate_cash(self, price_indexer: st.PriceRetriever, **kwargs) -> st.Numeric:
         lookup_value = 0
         for strategy in self.strategies:
             result = strategy.execute(price_indexer)

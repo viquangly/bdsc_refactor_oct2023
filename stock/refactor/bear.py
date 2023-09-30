@@ -4,7 +4,7 @@ import stock.refactor.strategy as st
 
 class EveningStar(st.Strategy):
 
-    def execute(self, price_indexer: st.PriceIndexer) -> st.StrategyResult:
+    def execute(self, price_indexer: st.PriceRetriever) -> st.StrategyResult:
         current_day_prices = price_indexer.get_standard_prices()
         prior_day_prices = price_indexer.get_standard_prices(-1)
         _2day_ago_prices = price_indexer.get_standard_prices(-2)
@@ -30,23 +30,23 @@ class EveningStar(st.Strategy):
 
 class Marubozu(st.Strategy):
 
-    def execute(self, price_indexer: st.PriceIndexer) -> st.StrategyResult:
+    def execute(self, price_indexer: st.PriceRetriever) -> st.StrategyResult:
         ...
 
 
 class SpinningTop(st.Strategy):
 
-    def execute(self, price_indexer: st.PriceIndexer) -> st.StrategyResult:
+    def execute(self, price_indexer: st.PriceRetriever) -> st.StrategyResult:
         ...
 
 
 class Doji(st.Strategy):
 
-    def execute(self, price_indexer: st.PriceIndexer) -> st.StrategyResult:
+    def execute(self, price_indexer: st.PriceRetriever) -> st.StrategyResult:
         ...
 
 
 class Hammer(st.Strategy):
 
-    def execute(self, price_indexer: st.PriceIndexer) -> st.StrategyResult:
+    def execute(self, price_indexer: st.PriceRetriever) -> st.StrategyResult:
         ...

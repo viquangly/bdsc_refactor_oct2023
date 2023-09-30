@@ -4,7 +4,7 @@ import stock.refactor.strategy as st
 import stock.refactor.bull as bull
 import stock.refactor.call as call
 
-stock_index = st.PriceIndexer(stock)
+stock_index = st.PriceRetriever(stock)
 
 stock.iloc[-1]
 stock_index.get_row(0)

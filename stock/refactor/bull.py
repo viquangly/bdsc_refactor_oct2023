@@ -4,7 +4,7 @@ import stock.refactor.strategy as st
 
 class Marubozu(st.Strategy):
 
-    def execute(self, price_indexer: st.PriceIndexer) -> st.StrategyResult:
+    def execute(self, price_indexer: st.PriceRetriever) -> st.StrategyResult:
         current_day_prices = price_indexer.get_standard_prices()
 
         if all([
@@ -18,7 +18,7 @@ class Marubozu(st.Strategy):
 
 class SpinningTop(st.Strategy):
 
-    def execute(self, price_indexer: st.PriceIndexer) -> st.StrategyResult:
+    def execute(self, price_indexer: st.PriceRetriever) -> st.StrategyResult:
         current_day_prices = price_indexer.get_standard_prices()
 
         if current_day_prices.open >= current_day_prices.close:
@@ -43,7 +43,7 @@ class SpinningTop(st.Strategy):
 
 class Doji(st.Strategy):
 
-    def execute(self, price_indexer: st.PriceIndexer) -> st.StrategyResult:
+    def execute(self, price_indexer: st.PriceRetriever) -> st.StrategyResult:
         current_day_prices = price_indexer.get_standard_prices()
 
         pattern = (
@@ -55,7 +55,7 @@ class Doji(st.Strategy):
 
 class Hammer(st.Strategy):
     
-    def execute(self, price_indexer: st.PriceIndexer) -> st.StrategyResult:
+    def execute(self, price_indexer: st.PriceRetriever) -> st.StrategyResult:
         current_day_prices = price_indexer.get_standard_prices()
         
         if (

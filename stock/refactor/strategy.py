@@ -12,7 +12,7 @@ StrategyResult = namedtuple('StrategyResult', ['pattern', 'price', 'stop_loss'])
 DEFAULT_STRATEGY_RESULT = StrategyResult(False, None, None)
 
 
-def has_downtrend(price_indexer: PriceIndexer) -> bool:
+def has_downtrend(price_indexer: PriceRetriever) -> bool:
     prev_day_close = price_indexer.get_price('Close', -1)
     _9day_ago_close = price_indexer.get_price('Close', -9)
     return (
@@ -21,7 +21,7 @@ def has_downtrend(price_indexer: PriceIndexer) -> bool:
     )
 
 
-def has_uptrend(price_indexer: PriceIndexer) -> bool:
+def has_uptrend(price_indexer: PriceRetriever) -> bool:
     prev_day_close = price_indexer.get_price('Close', -1)
     _9day_ago_close = price_indexer.get_price('Close', -9)
     return (
@@ -30,7 +30,7 @@ def has_uptrend(price_indexer: PriceIndexer) -> bool:
     )
 
 
-class PriceIndexer:
+class PriceRetriever:
 
     def __init__(self, data: pd.DataFrame):
         self.data = data
@@ -42,23 +42,23 @@ class PriceIndexer:
         shift_for_zero_index = 1
         return index - shift_for_zero_index
 
-    def __getitem__(self, index: Union[int, slice]) -> PriceIndexer:
+    def __getitem__(self, index: Union[int, slice]) -> PriceRetriever:
         if isinstance(index, int):
-            return PriceIndexer(self.get_row(index, as_dataframe=True))
+            return PriceRetriever(self.get_row(index, as_dataframe=True))
 
-        new_slice_args = [None if x is None else self._shift_index(x) for x in (index.start, index.stop, index.step)]
-        new_slice = slice(*new_slice_args)
-        return PriceIndexer(self.data.iloc[new_slice])
+        start, stop = [None if x is None else self._shift_index(x) for x in (index.start, index.stop)]
+        new_slice = slice(start, stop, index.step)
+        return PriceRetriever(self.data.iloc[new_slice])
 
-    def get_row(self, index: int = 0, as_dataframe: bool = False) -> Union[pd.Series, pd.DataFrame]:
-        index = self._shift_index(index)
-        return self.data.iloc[[index]] if as_dataframe else self.data.iloc[index]
+    def get_row(self, days_ago: int = 0, as_dataframe: bool = False) -> Union[pd.Series, pd.DataFrame]:
+        days_ago = self._shift_index(days_ago)
+        return self.data.iloc[[days_ago]] if as_dataframe else self.data.iloc[days_ago]
 
-    def get_price(self, price: str, index: int = 0) -> Numeric:
-        return self.get_row(index)[price]
+    def get_price(self, metric: str, days_ago: int = 0) -> Numeric:
+        return self.get_row(days_ago)[metric]
 
-    def get_standard_prices(self, index: int = 0) -> StandardPrices:
-        out = self.get_row(index)
+    def get_standard_prices(self, days_ago: int = 0) -> StandardPrices:
+        out = self.get_row(days_ago)
         return StandardPrices(*[out[price] for price in ('Open', 'Close', 'High', 'Low')])
 
 
@@ -68,13 +68,13 @@ class Strategy(ABC):
         self.weight = weight
 
     @abstractmethod
-    def execute(self, price_indexer: PriceIndexer) -> StrategyResult:
+    def execute(self, price_indexer: PriceRetriever) -> StrategyResult:
         ...
 
 
 class Volume(Strategy):
 
-    def execute(self, price_indexer: PriceIndexer) -> StrategyResult:
+    def execute(self, price_indexer: PriceRetriever) -> StrategyResult:
         current_day_volume = price_indexer.get_price('Volume')
         current_day_avg_volume = price_indexer.get_price('AVG_VOLUME')
         return StrategyResult(current_day_volume > current_day_avg_volume, None, None)
