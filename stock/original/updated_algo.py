@@ -255,8 +255,6 @@ class Stock_Lot_Short(object):
         return result
 
 
-# @BCP - not sure if this is a good case to use inheritance.  There is only one extra argument (ema) and the
-# get_stock_ema() method just retrieves the ema attribute.
 class Stock_Lot_EMA(Stock_Lot_Long):
     """
 
@@ -403,7 +401,6 @@ def Load_Data(stocks):
     return stocks_data_frame
 
 
-# @BCP - This is a bad function name - it's too vague.
 def Slice_Dataframe(dataframe, date):
     """
 
@@ -635,6 +632,7 @@ class Portfolio(object):
         print("Cash: " + str(self.get_long_cash()))
 
         print("---------------------------------")
+
 
 # @BCP - This should never have been a class.  There's too many attributes and methods attached to it.
 # This should be broken out into individual classes.
