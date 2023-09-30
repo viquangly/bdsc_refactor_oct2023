@@ -6,20 +6,22 @@ class Foo:
     def __init__(self):
         Foo.tag += 1
 
+    def get_stock_tag(self):
+        return Foo.tag
+
 
 class Bar(Foo):
     ...
 
 
 foo = Foo()
-foo.tag
+foo.get_stock_tag()
 
 tango = Foo()
-tango.tag
+tango.get_stock_tag()
 
-foo.tag
+foo.get_stock_tag()
 
 bar = Bar()
-bar.tag
-
-foo.tag
+bar.get_stock_tag()
+foo.get_stock_tag()
