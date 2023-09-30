@@ -13,10 +13,7 @@ def generate_fake_stock_data(ticker: str, n_rows: int = 100) -> pd.DataFrame:
     stock['High'] = (stock.max(axis=1) * np.random.uniform(low=1, high=2, size=n_rows)).round(2)
     stock['Low'] = (stock.min(axis=1) * np.random.uniform(low=.5, high=.99, size=n_rows)).round(2)
     stock['Date'] = list(
-        reversed([(date.today() - timedelta(days=x)).strftime('%Y-%m-%d') for x in range(n_rows)])
+        reversed([(date.today() - timedelta(days=x)).strftime('%Y%m%d') for x in range(n_rows)])
     )
     stock['Ticker'] = ticker
-    return stock
-
-
-stock = generate_fake_stock_data('Costco')
+    return stock.set_index('Date')

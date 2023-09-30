@@ -11,7 +11,7 @@ def _get_worth(stocks: Dict, date: str, lots: List) -> Numeric:
     for lot in lots:
         stock_data = stocks[lot.stock]
         stock_worth = stock_data.at[date, "Close"]
-        worth += stock_worth * lot.quanity
+        worth += stock_worth * lot.quantity
     return worth
 
 

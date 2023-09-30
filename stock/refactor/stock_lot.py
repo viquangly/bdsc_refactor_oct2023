@@ -63,7 +63,6 @@ class StockLot(ABC):
         return f'obj of class {self.__class__.__name__} for stock: {self.stock}'
 
 
-
 class StockLotLong(StockLot):
 
     def set_stop_loss(self, stop_loss: Optional[Numeric]) -> None:

@@ -5,7 +5,7 @@ from typing import Union
 
 import pandas as pd
 
-from _typing import Numeric
+from stock.refactor._typing import Numeric
 
 StandardPrices = namedtuple('StandardPrices', ['open', 'close', 'high', 'low'])
 StrategyResult = namedtuple('StrategyResult', ['pattern', 'price', 'stop_loss'])
