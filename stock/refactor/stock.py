@@ -50,16 +50,16 @@ class StockData:
         self.stocks = stocks
         self.data_by_stock = None
 
-    def retrieve_data(self):
+    def retrieve(self):
         self.data_by_stock = {
             ticker: yf.Ticker(ticker).history(period=str(period))
             for ticker, period in self.stocks.items()
         }
         return self
 
-    def transform_data(self) -> pd.DataFrame:
+    def transform(self) -> pd.DataFrame:
         if self.data_by_stock is None:
-            raise ValueError('Must call get_data() method before calling transform_data() method.')
+            raise ValueError('Must call retrieve() method before calling transform() method.')
         for data in self.data_by_stock.values():
             _transform_data(data)
 
