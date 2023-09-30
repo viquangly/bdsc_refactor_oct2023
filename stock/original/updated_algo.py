@@ -532,23 +532,29 @@ class Portfolio(object):
         return self.stock_lot_dict
 
     # @BCP - This should not have the EXACT same name as a class.
+
     # @BCP - All these methods are unnecessary and can be condensed to 2 methods
+
     # @BCP - There should be a safeguard to prevent the user from accidentally appending a Stock_Lot_Short object
     # into the stock_lots['Long']
+
+    # @BCP - There should be a safeguard to prevent the user from accidentally putting the same stock lot in twice
+    # perhaps by using a set instead of a list - However, the Stock Lot objects would have to be hashable
+
     def add_stock_lot_long(self, Stock_Lot_Long):
-        self.stock_lot_dict["Long"].append(Stock_Lot_Long)
+        self.stock_lot_dict["Long"].add(Stock_Lot_Long)
 
     def remove_stock_lot_long(self, Stock_Lot_Long):
         self.stock_lot_dict["Long"].remove(Stock_Lot_Long)
 
     def add_stock_lot_short(self, Stock_Lot_Short):
-        self.stock_lot_dict["Short"].append(Stock_Lot_Short)
+        self.stock_lot_dict["Short"].add(Stock_Lot_Short)
 
     def remove_stock_lot_short(self, Stock_Lot_Short):
         self.stock_lot_dict["Short"].remove(Stock_Lot_Short)
 
     def add_stock_lot_ema(self, Stock_Lot_EMA):
-        self.stock_lot_dict["EMA"].append(Stock_Lot_EMA)
+        self.stock_lot_dict["EMA"].add(Stock_Lot_EMA)
 
     def remove_stock_lot_ema(self, Stock_Lot_EMA):
         self.stock_lot_dict["EMA"].remove(Stock_Lot_EMA)
