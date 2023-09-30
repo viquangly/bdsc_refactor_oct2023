@@ -2,15 +2,6 @@
 import bisect
 
 
-def fast_search(x):
-    sequence = (.2, .3, .4, .5, .6, .7, .8)
-    response = (.05, .06, .07, .08, .09, .1, .11)
-    if x > sequence[-1]:
-        return 0.15
-    index = bisect.bisect_left(sequence, x)
-    return response[index]
-
-
 def slow_search(x):
     if 0.10 < x <= 0.20:
         return 0.05
@@ -37,9 +28,31 @@ def slow_search(x):
         return 0.15
 
 
+def loop_search(x):
+    sequence = (.2, .3, .4, .5, .6, .7, .8)
+    response = (.05, .06, .07, .08, .09, .1, .11)
+    for threshold, value in zip(sequence, response):
+        if x <= threshold:
+            return value
+    return 0.15
+
+
+def fast_search(x):
+    sequence = (.2, .3, .4, .5, .6, .7, .8)
+    response = (.05, .06, .07, .08, .09, .1, .11)
+    if x > sequence[-1]:
+        return 0.15
+    index = bisect.bisect_left(sequence, x)
+    return response[index]
+
+
 if __name__ == '__main__':
-    %%timeit
-    fast_search(.79)
 
     %%timeit
     slow_search(.79)
+
+    %%timeit
+    loop_search(.79)
+
+    %%timeit
+    fast_search(.79)
