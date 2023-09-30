@@ -28,7 +28,7 @@ class Stock_Lot_Long(object):
     An object of type Stock_Lot_Long used to create stock_lot of the type "LONG"
     Input parameters:
         stock= Name of the stock(String)
-        buy_price=The price at which the stock is bought(Float)
+        price=The price at which the stock is bought(Float)
         quantity=The amount of stock bought(Int)
         date= The date at which the stock was bought
         stop_loss=The stop loss price of the stock_lot(Float)
@@ -45,7 +45,7 @@ class Stock_Lot_Long(object):
         __init__ : Intialises all the variables. Also updates "tag" by 1.
             self.stock= Used to store stock
             self.date=Used to store date
-            self.buy_price=Used to store buy_price
+            self.price=Used to store price
             self.stop_loss=Used to store stop_loss.If stop_loss not given assigns a default value.
             self.target=Used to store target.If target not given assigns a default value.
 
@@ -53,7 +53,7 @@ class Stock_Lot_Long(object):
 
         get_stock_quantity() : Returns self.quantity
 
-        get_stock_buy_price(): Returns self.buy_price
+        get_stock_buy_price(): Returns self.price
 
         get_stock_stop_loss(): Returns self.stop_loss
 
@@ -70,7 +70,7 @@ class Stock_Lot_Long(object):
         set_stock_target(target) : Sets self.target to a particular value(Float)
 
 
-        __str__() : Prints basic information about the stock lot. Eg quantity,date,buy_price
+        __str__() : Prints basic information about the stock lot. Eg quantity,date,price
 
     """
 
@@ -753,7 +753,7 @@ class Technical_analysis(object):
         self.bol_lowindex = self.columns.index("BOL_LOW")
 
     # @BCP - Notice the trend that all the bullish functions have repeated code setting the
-    # buy_price, stop_loss, and pattern.  The same goes for the bear functions have repeated code setting the default
+    # price, stop_loss, and pattern.  The same goes for the bear functions have repeated code setting the default
     # values for sell_price, stop_loss, pattern
 
     # @BCP - This is a bad method name - methods / functions should be verbs and not nouns
@@ -967,7 +967,7 @@ class Technical_analysis(object):
         return (pattern, sell_price, stop_loss)
 
     # @BCP - same as the comment above.  Code inconsistency - in other bullish methods, it starts with
-    #  buy_price, stop_loss, pattern
+    #  price, stop_loss, pattern
     def bullish_inverted_hammer(self):
         pattern = False
         buy_price = None

@@ -1,11 +1,11 @@
 from __future__ import annotations
 from abc import ABC, abstractmethod
 from collections import namedtuple
-from typing import Union, Optional
+from typing import Union
 
 import pandas as pd
 
-Numeric = Union[float, int]
+from _typing import Numeric
 
 StandardPrices = namedtuple('StandardPrices', ['open', 'close', 'high', 'low'])
 StrategyResult = namedtuple('StrategyResult', ['pattern', 'price', 'stop_loss'])

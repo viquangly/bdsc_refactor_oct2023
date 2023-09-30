@@ -6,13 +6,14 @@ from typing import Sequence
 import stock.refactor.strategy as st
 import stock.refactor.bull as bull
 import stock.refactor.bear as bear
+from stock.refactor._typing import Numeric
 
 
 def calculate_cash(
-        x: st.Numeric, max_cash: st.Numeric = .15,
-        long_shorts: Sequence[st.Numeric] = (.2, .3, .4, .5, .6, .7, .8),
-        cash: Sequence[st.Numeric] = (.05, .06, .07, .08, .09, .1, .11)
-) -> st.Numeric:
+        x: Numeric, max_cash: Numeric = .15,
+        long_shorts: Sequence[Numeric] = (.2, .3, .4, .5, .6, .7, .8),
+        cash: Sequence[Numeric] = (.05, .06, .07, .08, .09, .1, .11)
+) -> Numeric:
     if x > long_shorts[-1]:
         return max_cash
     index = bisect.bisect_left(long_shorts, x)
@@ -25,7 +26,7 @@ class Call(ABC):
     def __init__(self, strategies: Sequence[st.Strategy]):
         self.strategies = strategies
 
-    def calculate_cash(self, price_indexer: st.PriceRetriever, **kwargs) -> st.Numeric:
+    def calculate_cash(self, price_indexer: st.PriceRetriever, **kwargs) -> Numeric:
         lookup_value = 0
         for strategy in self.strategies:
             result = strategy.execute(price_indexer)

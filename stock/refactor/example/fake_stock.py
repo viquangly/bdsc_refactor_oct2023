@@ -5,7 +5,7 @@ import numpy as np
 import pandas as pd
 
 
-def generate_fake_stock_data(n_rows: int) -> pd.DataFrame:
+def generate_fake_stock_data(ticker: str, n_rows: int = 100) -> pd.DataFrame:
     stock = pd.DataFrame({
         col_name: np.abs(np.random.normal(loc=100, scale=5, size=n_rows)).round(2)
         for col_name in ('Open', 'Close', 'Volume', 'AVG_VOLUME')
@@ -15,6 +15,8 @@ def generate_fake_stock_data(n_rows: int) -> pd.DataFrame:
     stock['Date'] = list(
         reversed([(date.today() - timedelta(days=x)).strftime('%Y-%m-%d') for x in range(n_rows)])
     )
+    stock['Ticker'] = ticker
     return stock
 
-stock = generate_fake_stock_data(100)
+
+stock = generate_fake_stock_data('Costco')

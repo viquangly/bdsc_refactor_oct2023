@@ -2,8 +2,8 @@
 import itertools
 from typing import Dict, List, Set
 
-from stock.refactor.strategy import Numeric
-from stock.original.updated_algo import Stock_Lot_Short, Stock_Lot_EMA, Stock_Lot_Long
+from stock.refactor._typing import Numeric
+from stock.refactor.stock_lot import StockLotShort, StockLotEMA, StockLotLong
 
 
 def _get_worth(stocks: Dict, date: str, lots: List) -> Numeric:
@@ -24,7 +24,7 @@ class PortfolioWithDict:
 
     def add(self, lot):
         for key, lot_type in (
-                ('EMA', Stock_Lot_EMA), ('Short', Stock_Lot_Short), ('Long', Stock_Lot_Long)
+                ('EMA', StockLotEMA), ('Short', StockLotShort), ('Long', StockLotLong)
         ):
             if isinstance(lot, lot_type):
                 self.stock_lots[key].append(lot)
@@ -33,7 +33,7 @@ class PortfolioWithDict:
 
     def remove(self, lot):
         for key, lot_type in (
-                ('EMA', Stock_Lot_EMA), ('Short', Stock_Lot_Short), ('Long', Stock_Lot_Long)
+                ('EMA', StockLotEMA), ('Short', StockLotShort), ('Long', StockLotLong)
         ):
             if isinstance(lot, lot_type):
                 self.stock_lots[key].remove(lot)
@@ -48,6 +48,16 @@ class PortfolioWithDict:
         valid_lots = [lots for key, lots in self.stock_lots.items() if key != 'Short']
         valid_lots = list(itertools.chain(*valid_lots))
         return _get_worth(stocks_lookup, date, valid_lots)
+
+    def print_portfolio(self):
+
+        print("---------------------------------")
+        for lots in self.stock_lots.values():
+            for lot in lots:
+                print(lot)
+
+        print(f"Cash: ${self.long_cash:,.2f}")
+        print("---------------------------------")
 
 
 class PortfolioWithList:
@@ -64,11 +74,11 @@ class PortfolioWithList:
         self.stock_lots.remove(lot)
 
     def get_short_worth(self, stocks_lookup: Dict, date: str):
-        valid_lots = [lot for lot in self.stock_lots if isinstance(lot, Stock_Lot_Short)]
+        valid_lots = [lot for lot in self.stock_lots if isinstance(lot, StockLotShort)]
         return _get_worth(stocks_lookup, date, valid_lots)
 
     def get_long_worth(self, stocks_lookup: Dict, date: str):
-        valid_lots = [lot for lot in self.stock_lots if not isinstance(lot, Stock_Lot_Short)]
+        valid_lots = [lot for lot in self.stock_lots if not isinstance(lot, StockLotShort)]
         return _get_worth(stocks_lookup, date, valid_lots)
 
     def print_portfolio(self):
@@ -95,11 +105,11 @@ class PortfolioWithSet:
         self.stock_lots.remove(lot)
 
     def get_short_worth(self, stocks_lookup: Dict, date: str):
-        valid_lots = [lot for lot in self.stock_lots if isinstance(lot, Stock_Lot_Short)]
+        valid_lots = [lot for lot in self.stock_lots if isinstance(lot, StockLotShort)]
         return _get_worth(stocks_lookup, date, valid_lots)
 
     def get_long_worth(self, stocks_lookup: Dict, date: str):
-        valid_lots = [lot for lot in self.stock_lots if not isinstance(lot, Stock_Lot_Short)]
+        valid_lots = [lot for lot in self.stock_lots if not isinstance(lot, StockLotShort)]
         return _get_worth(stocks_lookup, date, valid_lots)
 
     def print_portfolio(self):

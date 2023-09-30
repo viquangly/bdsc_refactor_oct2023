@@ -7,7 +7,7 @@ import yfinance as yf
 from period import Period
 
 
-def assert_stocks(stocks: Dict[str, Period]) -> None:
+def _validate_stocks(stocks: Dict[str, Period]) -> Dict[str, Period]:
     if not isinstance(stocks, dict):
         raise TypeError(
             'stocks must be a dict keyed by str representing stock ticker and Period objs as corresponding values'
@@ -18,6 +18,8 @@ def assert_stocks(stocks: Dict[str, Period]) -> None:
 
     if not all(isinstance(period, Period) for period in stocks.values()):
         raise TypeError('values in stocks must be of type Period')
+
+    return stocks
 
 
 def _create_ema_feature(data: pd.DataFrame, spans: Sequence[int]) -> None:
@@ -46,8 +48,7 @@ def _transform_data(data: pd.DataFrame) -> None:
 class StockData:
 
     def __init__(self, stocks: Dict[str, Period]):
-        assert_stocks(stocks)
-        self.stocks = stocks
+        self.stocks = _validate_stocks(stocks)
         self.data_by_stock = None
 
     def retrieve(self):
