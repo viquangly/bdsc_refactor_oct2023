@@ -59,6 +59,10 @@ class StockLot(ABC):
     def __hash__(self):
         return id(self)
 
+    def __repr__(self):
+        return f'obj of class {self.__class__.__name__} for stock: {self.stock}'
+
+
 
 class StockLotLong(StockLot):
 
