@@ -47,9 +47,6 @@ class StockLot(ABC):
     def __str__(self):
         pass
 
-    def get_stock_tag(self):
-        return self.tag
-
     def get_unique_id(self):
         return id(self)
 
