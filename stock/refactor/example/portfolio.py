@@ -1,5 +1,4 @@
 
-from copy import deepcopy
 from datetime import datetime
 
 import stock.refactor.portfolio as srp
