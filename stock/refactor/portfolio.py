@@ -120,3 +120,33 @@ class PortfolioWithSet:
 
         print(f"Cash: ${self.long_cash:,.2f}")
         print("---------------------------------")
+
+
+class PortfolioWithDictDeduped(PortfolioWithDict):
+
+    def __init__(self, long_cash: Numeric, short_cash: Numeric, stock_lots: Dict):
+        super().__init__(long_cash, short_cash, stock_lots)
+        self.lots_seen = set(itertools.chain(*stock_lots.values()))
+
+    def add(self, lot):
+        if lot in self.lots_seen:
+            return None
+
+        for key, lot_type in (
+                ('EMA', StockLotEMA), ('Short', StockLotShort), ('Long', StockLotLong)
+        ):
+            if isinstance(lot, lot_type):
+                self.stock_lots[key].append(lot)
+                self.lots_seen.add(lot)
+                return None
+        raise TypeError('lot must be an object of type Stock_Lot_EMA, Stock_Lot_Short, or Stock_Lot_Long')
+
+    def remove(self, lot):
+        for key, lot_type in (
+                ('EMA', StockLotEMA), ('Short', StockLotShort), ('Long', StockLotLong)
+        ):
+            if isinstance(lot, lot_type):
+                self.stock_lots[key].remove(lot)
+                self.lots_seen.remove(lot)
+                return None
+        raise TypeError('lot must be an object of type Stock_Lot_EMA, Stock_Lot_Short, or Stock_Lot_Long')
