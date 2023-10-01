@@ -1,5 +1,5 @@
 
-from stock.refactor.example.fake_stock import generate_fake_stock_data
+from stock.refactor.example.fake_data import generate_fake_stock_data
 import stock.refactor.strategy as st
 import stock.refactor.bull as bull
 import stock.refactor.call as call
