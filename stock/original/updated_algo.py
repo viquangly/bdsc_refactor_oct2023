@@ -1622,6 +1622,8 @@ class Backtest(object):
                     elif price <= stop_loss:
                         sell_cash = lot.get_stock_quantity() * price
 
+                    # @BCP - This if statement should be merged into the ones above.  The only way sell_cash is not None
+                    # is if the condition above is met.
                     if sell_cash != None:
                         self.portfolio.add_long_cash(sell_cash)
                         self.portfolio.remove_stock_lot_long(lot)
