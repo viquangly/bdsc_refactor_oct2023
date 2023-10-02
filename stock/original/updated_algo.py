@@ -79,6 +79,10 @@ class Stock_Lot_Long(object):
     tag = 1
 
     # @BCP - Don't convert argument underneath the hood.  Force the user to do it beforehand.
+    # Why does quantity have to be an int and buy_price a float?
+
+    # @BCP - date argument is ambiguous.  There is inconsistent code in date format.  In Slice_Data, date is an int.
+    # However, in get_long_worth and get_short_worth, it is a str in form of 'YYYYMMDD'
     def __init__(self, stock, buy_price, quantity, date, stop_loss=None, target=None):
         self.stock = str(stock)
         self.date = date
@@ -401,6 +405,11 @@ def Load_Data(stocks):
     return stocks_data_frame
 
 
+# @BCP - Inconsistent code.  You have multiple variations of dataframe (dataframe, Dataframe, stocks_data_frame)
+# This is a good example of why using the name stocks_data_frame from above is bad.
+
+# @BCP - Inconsistent code.  In this function, date is supposed to be an integer.  However, date in get_long_worth and
+# get_short_worth methods is a string in form of 'YYYYMMDD'
 def Slice_Dataframe(dataframe, date):
     """
 
@@ -537,6 +546,9 @@ class Portfolio(object):
 
     # @BCP - There should be a safeguard to prevent the user from accidentally putting the same stock lot in twice
     # perhaps by using a set instead of a list - However, the Stock Lot objects would have to be hashable
+
+    # @BCP - In initialize_variables function, the values of stock_lot_dict are lists.  List do not have the add method
+    # This will generate an error.
 
     def add_stock_lot_long(self, Stock_Lot_Long):
         self.stock_lot_dict["Long"].add(Stock_Lot_Long)
@@ -1602,6 +1614,8 @@ class Backtest(object):
                     price = self.stocks_data_frame[name].iat[date, self.columnsindex["Close"]]
                     sell_cash = None
 
+                    # @BCP - Why is the elif condition needed when you are performing the same operation when either
+                    # condition is met?
                     if price >= target:
                         sell_cash = lot.get_stock_quantity() * price
 
@@ -1784,6 +1798,7 @@ class Backtest(object):
             decision_dict[stock_name]=stock_dict
         return (decision_dict,price_dict)
 
+    # @BCP - method / function names should be verbs and not nouns
     def decision_scheduler(self,decision_dict):
         long_list=[]
         short_list=[]
