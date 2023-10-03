@@ -30,7 +30,7 @@ class Call(ABC):
         lookup_value = 0
         for strategy in self.strategies:
             result = strategy.execute(price_indexer)
-            if result.pattern:
+            if result.has_pattern:
                 lookup_value += strategy.weight
 
         return calculate_cash(lookup_value, **kwargs)

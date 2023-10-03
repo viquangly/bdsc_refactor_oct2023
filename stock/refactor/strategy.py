@@ -8,7 +8,7 @@ import pandas as pd
 from stock.refactor._typing import Numeric
 
 StandardPrices = namedtuple('StandardPrices', ['open', 'close', 'high', 'low'])
-StrategyResult = namedtuple('StrategyResult', ['pattern', 'price', 'stop_loss'])
+StrategyResult = namedtuple('StrategyResult', ['has_pattern', 'price', 'stop_loss'])
 DEFAULT_STRATEGY_RESULT = StrategyResult(False, None, None)
 
 

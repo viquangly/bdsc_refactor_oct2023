@@ -19,8 +19,8 @@ class EveningStar(st.Strategy):
             return st.DEFAULT_STRATEGY_RESULT
 
         prior_day = price_indexer[-1]
-        has_doji = bull.Doji().execute(prior_day).pattern
-        has_spinning_top = bull.SpinningTop().execute(prior_day).pattern
+        has_doji = bull.Doji().execute(prior_day).has_pattern
+        has_spinning_top = bull.SpinningTop().execute(prior_day).has_pattern
 
         if has_doji or has_spinning_top:
             return st.StrategyResult(True, current_day_prices.close, low)
